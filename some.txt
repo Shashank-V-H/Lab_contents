@@ -1,0 +1,218 @@
+****** 3 node *******
+
+set ns [new Simulator]
+set nf [open prog1.nam w]
+$ns namtrace-all $nf
+set nd [open prog1.tr w]
+$ns trace-all $nd
+
+proc finish { } {
+  global ns nf nd
+  $ns flush-trace
+  close $nf
+  close $nd
+  exec nam prog1.nam &
+  exit 0
+}
+
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+
+$ns duplex-link $n0 $n1 1Mb 10ms DropTail
+$ns duplex-link $n1 $n2 512kb 10ms DropTail
+
+$ns queue-limit $n1 $n2 10
+
+####### till here the code is same for both the programs #######
+
+set udp0 [new Agent/UDP]
+$ns attach-agent $n0 $udp0
+
+set cbr0 [new Application/Traffic/CBR]
+$cbr0 set packetSize_ 500
+$cbr0 set interval_ 0.005
+$cbr0 attach-agent $udp0
+
+set sink [new Agent/Null]
+$ns attach-agent $n2 $sink
+$ns connect $udp0 $sink
+
+$ns at 0.2 "$cbr0 start"
+$ns at 4.5 "$cbr0 stop"
+$ns at 5.0 "finish"
+
+$ns run
+
+****** ping ********
+
+
+om with round-trip-time $rtt ms."
+}
+
+set p1 [new Agent/Ping]
+set p2 [new Agent/Ping]
+set p3 [new Agent/Ping]
+set p4 [new Agent/Ping]
+set p5 [new Agent/Ping]
+set p6 [new Agent/Ping]
+
+$ns attach-agent $n1 $p1
+$ns attach-agent $n2 $p2
+$ns attach-agent $n3 $p3
+$ns attach-agent $n4 $p4
+$ns attach-agent $n5 $p5
+$ns attach-agent $n6 $p6
+
+$ns queue-limit $n0 $n4 3
+$ns queue-limit $n0 $n5 2
+$ns queue-limit $n0 $n6 2
+$ns queue-limit $n0 $n3 2
+$ns queue-limit $n0 $n2 1
+$ns queue-limit $n0 $n1 2
+
+$ns connect $p1 $p4
+$ns connect $p2 $p5
+$ns connect $p3 $p6
+$ns connect $p6 $p3
+
+$ns at 0.2 "$p1 send"
+$ns at 0.4 "$p2 send"
+$ns at 0.6 "$p3 send"
+$ns at 1.0 "$p4 send"
+$ns at 1.2 "$p5 send"
+$ns at 1.4 "$p6 send"
+
+$ns at 2.0 "finish"
+$ns runset ns [new Simulator]
+set nf [open prog2.nam w]
+$ns namtrace-all $nf
+set nd [open prog2.tr w]
+$ns trace-all $nd
+
+proc finish {} {
+  global ns nf nd
+  $ns flush-trace
+  close $nf
+  close $nd
+  exec nam prog2.nam &
+  exit 0
+}
+
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+set n3 [$ns node]
+set n4 [$ns node]
+set n5 [$ns node]
+set n6 [$ns node]
+
+$ns duplex-link $n1 $n0 1Mb 10ms DropTail
+$ns duplex-link $n2 $n0 1Mb 10ms DropTail
+$ns duplex-link $n3 $n0 1Mb 10ms DropTail
+$ns duplex-link $n4 $n0 1Mb 10ms DropTail
+$ns duplex-link $n5 $n0 1Mb 10ms DropTail
+$ns duplex-link $n6 $n0 1Mb 10ms DropTail
+
+
+# till here same for both the programs
+
+
+Agent/Ping instproc recv {from rtt} {
+  $self instvar node_
+  puts "node [$node_ id] received ping answer from $fr
+
+
+****** BellmanFord *****
+
+import java.util.Scanner;
+
+public class BellmanFord {
+
+  public static void main(String args[]) {
+    Scanner scanner = new Scanner(System.in);
+
+    System.out.println("Enter the number of vertices: ");
+    int numVer = scanner.nextInt();
+
+    int[][] graph = new int[numVer + 1][numVer + 1];
+    int[] distance = new int[numVer + 1];
+    final int MAX_VALUE = 999;
+
+    System.out.println("Enter the adjacency matrix: ");
+    for (int source = 1; source <= numVer; source++) {
+      for (int dest = 1; dest <= numVer; dest++) {
+        graph[source][dest] = scanner.nextInt();
+        if (source != dest && graph[source][dest] == 0) {
+          graph[source][dest] = MAX_VALUE;
+        }
+      }
+    }
+
+    System.out.println("Enter the source vertex: ");
+    int sourceVertex = scanner.nextInt();
+
+    for (int node = 1; node <= numVer; node++)
+      distance[node] = MAX_VALUE;
+    distance[sourceVertex] = 0;
+
+    for (int node = 1; node <= numVer - 1; node++) {
+      for (int sourceNode = 1; sourceNode <= numVer; sourceNode++) {
+        for (int destNode = 1; destNode <= numVer; destNode++) {
+          if (graph[sourceNode][destNode] != MAX_VALUE) {
+            if (distance[destNode] > distance[sourceNode] + graph[sourceNode][destNode]) {
+              distance[destNode] = distance[sourceNode] + graph[sourceNode][destNode];
+            }
+          }
+        }
+      }
+    }
+
+    for (int sourceNode = 1; sourceNode <= numVer; sourceNode++) {
+      for (int destNode = 1; destNode < numVer; destNode++) {
+        if (graph[sourceNode][destNode] != MAX_VALUE) {
+          if (distance[destNode] > distance[sourceNode] + graph[sourceNode][destNode]) {
+            System.out.println("The graph contains a negative edge cycle.");
+          }
+        }
+      }
+    }
+
+    for (int vertex = 1; vertex <= numVer; vertex++) {
+      System.out.println("Distance of source " + sourceVertex + " to " + vertex + " is " + distance[vertex]);
+    }
+
+    scanner.close();
+  }
+}
+
+*********** leaky_bucket ***************
+
+import java.util.Scanner;
+
+public class leakyBucket {
+  public static void main(String args[]) throws InterruptedException {
+    int bs, incoming, outgoing, n, s = 0;
+    System.out.println("Enter the bucketsize, incoming_size, outgoing_rate, no_of_inputs:");
+    Scanner box = new Scanner(System.in);
+    bs = box.nextInt();
+    incoming = box.nextInt();
+    outgoing = box.nextInt();
+    n = box.nextInt();
+    while (n != 0) { // while loop until n is equal to zero
+      System.out.println("Incoming packet size = " + incoming);
+      if (incoming <= (bs - s)) { 
+        s += incoming;
+      } else {
+        System.out.println("Packet lost = " + (incoming - (bs - s)));
+        // packet lost = incoming - (bucketsize-currentsize);
+        s = bs;// s is updated to the full bucket size.
+        System.out.println("Bucket current size = " + s + " out of " + bs); 
+      }
+      s -= outgoing; // s is updated after outgoing. and then that is printed.
+      System.out.println("after outgoing of packet " + outgoing + " current bukcet size = " + s + " out of " + bs);
+      n--;
+      Thread.sleep(3000);
+    }
+  }
+}
