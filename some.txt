@@ -1,104 +1,136 @@
-****** 3 node *******
+---- Java ----
+package c_N;
 
+import java.io.*;
+import java.util.Scanner;
+
+class CRC {
+    public static void main(String a[]) throws IOException {
+
+        Scanner in = new Scanner(System.in);
+        int[] message;
+        int[] gen;
+        int[] app_message;
+        int[] rem;
+        int[] trans_message;
+        int message_bits, gen_bits, total_bits;
+
+        System.out.println("\n Enter number of bits in message : ");
+        message_bits = in.nextInt();
+        message = new int[message_bits];
+        System.out.println("\n Enter message bits : ");
+        for (int i = 0; i < message_bits; i++)
+            message[i] = in.nextInt();
+        System.out.println("\n Enter number of bits in gen : ");
+        gen_bits = in.nextInt();
+
+        gen = new int[gen_bits];
+        System.out.println("\n Enter gen bits : ");
+        for (int i = 0; i < gen_bits; i++) {
+            gen[i] = in.nextInt();
+        }
+        total_bits = message_bits + gen_bits - 1;
+
+        app_message = new int[total_bits];
+        rem = new int[total_bits];
+        trans_message = new int[total_bits];
+
+        for (int i = 0; i < message.length; i++) {
+            app_message[i] = message[i];
+        }
+
+        System.out.print("\n Message bits are : ");
+        for (int i = 0; i < message_bits; i++) {
+            System.out.print(message[i]);
+        }
+        System.out.print("\n Generators bits are : ");
+        for (int i = 0; i < gen_bits; i++) {
+            System.out.print(gen[i]);
+        }
+
+        System.out.print("\n Appended message is : ");
+        for (int i = 0; i < app_message.length; i++) {
+            System.out.print(app_message[i]);
+        }
+
+        for (int j = 0; j < app_message.length; j++) {
+            rem[j] = app_message[j];
+        }
+
+        rem = computeCRC(app_message, gen, rem);
+
+        for (int i = 0; i < app_message.length; i++) {
+            trans_message[i] = (app_message[i] ^ rem[i]);
+        }
+
+        System.out.println("\n Transmitted message from the transmitter is : ");
+        for (int i = 0; i < trans_message.length; i++) {
+            System.out.print(trans_message[i]);
+        }
+
+        System.out.println("\n Enter received message of " + total_bits + " bits at receiver end : ");
+        for (int i = 0; i < trans_message.length; i++) {
+            trans_message[i] = in.nextInt();
+            ;
+        }
+        System.out.println("\n Received message is :");
+        for (int i = 0; i < trans_message.length; i++) {
+            System.out.print(trans_message[i]);
+        }
+
+        for (int j = 0; j < trans_message.length; j++) {
+            rem[j] = trans_message[j];
+        }
+        rem = computeCRC(trans_message, gen, rem);
+        for (int i = 0; i < rem.length; i++) {
+            if (rem[i] != 0)
+
+            {
+                System.out.println("\n There is Error in the received me ");
+                break;
+            }
+            if (i == rem.length - 1)
+
+                System.out.println("\n There is No Error in the received m ");
+        }
+    }
+
+    static int[] computeCRC(int app_message[], int gen[], int rem[]) {
+        int current = 0;
+        while (true) {
+            for (int i = 0; i < gen.length; i++) {
+                rem[current + i] = (rem[current + i] ^ gen[i]);
+            }
+            while (rem[current] == 0 && current != rem.length - 1) {
+                current++;
+            }
+            if ((rem.length - current) < gen.length) {
+                break;
+            }
+        }
+        return rem;
+    }
+}
+
+------------
+1.Implement an Ethernet LAN using n nodes and set multiple traffic nodes and plotcongestion 
+window for different source / destination.
+ 
 set ns [new Simulator]
-set nf [open prog1.nam w]
+set nf [open prog3.nam w]
 $ns namtrace-all $nf
-set nd [open prog1.tr w]
+set nd [open prog3.tr w]
 $ns trace-all $nd
-
+$ns color 1 Blue
+$ns color 2 Red
 proc finish { } {
-  global ns nf nd
-  $ns flush-trace
-  close $nf
-  close $nd
-  exec nam prog1.nam &
-  exit 0
+global ns nf nd
+$ns flush-trace
+close $nf
+close $nd
+exec nam prog3.nam &
+exit 0
 }
-
-set n0 [$ns node]
-set n1 [$ns node]
-set n2 [$ns node]
-
-$ns duplex-link $n0 $n1 1Mb 10ms DropTail
-$ns duplex-link $n1 $n2 512kb 10ms DropTail
-
-$ns queue-limit $n1 $n2 10
-
-####### till here the code is same for both the programs #######
-
-set udp0 [new Agent/UDP]
-$ns attach-agent $n0 $udp0
-
-set cbr0 [new Application/Traffic/CBR]
-$cbr0 set packetSize_ 500
-$cbr0 set interval_ 0.005
-$cbr0 attach-agent $udp0
-
-set sink [new Agent/Null]
-$ns attach-agent $n2 $sink
-$ns connect $udp0 $sink
-
-$ns at 0.2 "$cbr0 start"
-$ns at 4.5 "$cbr0 stop"
-$ns at 5.0 "finish"
-
-$ns run
-
-****** ping ********
-
-
-om with round-trip-time $rtt ms."
-}
-
-set p1 [new Agent/Ping]
-set p2 [new Agent/Ping]
-set p3 [new Agent/Ping]
-set p4 [new Agent/Ping]
-set p5 [new Agent/Ping]
-set p6 [new Agent/Ping]
-
-$ns attach-agent $n1 $p1
-$ns attach-agent $n2 $p2
-$ns attach-agent $n3 $p3
-$ns attach-agent $n4 $p4
-$ns attach-agent $n5 $p5
-$ns attach-agent $n6 $p6
-
-$ns queue-limit $n0 $n4 3
-$ns queue-limit $n0 $n5 2
-$ns queue-limit $n0 $n6 2
-$ns queue-limit $n0 $n3 2
-$ns queue-limit $n0 $n2 1
-$ns queue-limit $n0 $n1 2
-
-$ns connect $p1 $p4
-$ns connect $p2 $p5
-$ns connect $p3 $p6
-$ns connect $p6 $p3
-
-$ns at 0.2 "$p1 send"
-$ns at 0.4 "$p2 send"
-$ns at 0.6 "$p3 send"
-$ns at 1.0 "$p4 send"
-$ns at 1.2 "$p5 send"
-$ns at 1.4 "$p6 send"
-
-$ns at 2.0 "finish"
-$ns runset ns [new Simulator]
-set nf [open prog2.nam w]
-$ns namtrace-all $nf
-set nd [open prog2.tr w]
-$ns trace-all $nd
-
-proc finish {} {
-  global ns nf nd
-  $ns flush-trace
-  close $nf
-  close $nd
-  exec nam prog2.nam &
-  exit 0
-}
-
 set n0 [$ns node]
 set n1 [$ns node]
 set n2 [$ns node]
@@ -106,113 +138,173 @@ set n3 [$ns node]
 set n4 [$ns node]
 set n5 [$ns node]
 set n6 [$ns node]
-
-$ns duplex-link $n1 $n0 1Mb 10ms DropTail
-$ns duplex-link $n2 $n0 1Mb 10ms DropTail
-$ns duplex-link $n3 $n0 1Mb 10ms DropTail
-$ns duplex-link $n4 $n0 1Mb 10ms DropTail
-$ns duplex-link $n5 $n0 1Mb 10ms DropTail
-$ns duplex-link $n6 $n0 1Mb 10ms DropTail
-
-
-# till here same for both the programs
-
-
-Agent/Ping instproc recv {from rtt} {
-  $self instvar node_
-  puts "node [$node_ id] received ping answer from $fr
-
-
-****** BellmanFord *****
-
-import java.util.Scanner;
-
-public class BellmanFord {
-
-  public static void main(String args[]) {
-    Scanner scanner = new Scanner(System.in);
-
-    System.out.println("Enter the number of vertices: ");
-    int numVer = scanner.nextInt();
-
-    int[][] graph = new int[numVer + 1][numVer + 1];
-    int[] distance = new int[numVer + 1];
-    final int MAX_VALUE = 999;
-
-    System.out.println("Enter the adjacency matrix: ");
-    for (int source = 1; source <= numVer; source++) {
-      for (int dest = 1; dest <= numVer; dest++) {
-        graph[source][dest] = scanner.nextInt();
-        if (source != dest && graph[source][dest] == 0) {
-          graph[source][dest] = MAX_VALUE;
-        }
-      }
-    }
-
-    System.out.println("Enter the source vertex: ");
-    int sourceVertex = scanner.nextInt();
-
-    for (int node = 1; node <= numVer; node++)
-      distance[node] = MAX_VALUE;
-    distance[sourceVertex] = 0;
-
-    for (int node = 1; node <= numVer - 1; node++) {
-      for (int sourceNode = 1; sourceNode <= numVer; sourceNode++) {
-        for (int destNode = 1; destNode <= numVer; destNode++) {
-          if (graph[sourceNode][destNode] != MAX_VALUE) {
-            if (distance[destNode] > distance[sourceNode] + graph[sourceNode][destNode]) {
-              distance[destNode] = distance[sourceNode] + graph[sourceNode][destNode];
-            }
-          }
-        }
-      }
-    }
-
-    for (int sourceNode = 1; sourceNode <= numVer; sourceNode++) {
-      for (int destNode = 1; destNode < numVer; destNode++) {
-        if (graph[sourceNode][destNode] != MAX_VALUE) {
-          if (distance[destNode] > distance[sourceNode] + graph[sourceNode][destNode]) {
-            System.out.println("The graph contains a negative edge cycle.");
-          }
-        }
-      }
-    }
-
-    for (int vertex = 1; vertex <= numVer; vertex++) {
-      System.out.println("Distance of source " + sourceVertex + " to " + vertex + " is " + distance[vertex]);
-    }
-
-    scanner.close();
-  }
+set n7 [$ns node]
+set n8 [$ns node]
+$n7 shape box
+$n7 color Blue
+$n8 shape hexagon
+$n8 color Red
+$ns duplex-link $n1 $n0 2Mb 10ms DropTail
+ 
+$ns duplex-link $n2 $n0 2Mb 10ms DropTail
+$ns duplex-link $n0 $n3 1Mb 20ms DropTail
+$ns make-lan "$n3 $n4 $n5 $n6 $n7 $n8" 512Kb 40ms LL Queue/DropTail Mac/802_3
+$ns duplex-link-op $n1 $n0 orient right-down
+$ns duplex-link-op $n2 $n0 orient right-up
+$ns duplex-link-op $n0 $n3 orient right
+$ns queue-limit $n0 $n3 20
+set tcp1 [new Agent/TCP/Vegas]
+$ns attach-agent $n1 $tcp1
+set sink1 [new Agent/TCPSink]
+$ns attach-agent $n7 $sink1
+$ns connect $tcp1 $sink1
+$tcp1 set class_ 1
+$tcp1 set packetsize_ 55
+set ftp1 [new Application/FTP]
+$ftp1 attach-agent $tcp1
+set tfile [open cwnd.tr w]
+$tcp1 attach $tfile
+$tcp1 trace cwnd_
+set tcp2 [new Agent/TCP/Reno]
+$ns attach-agent $n2 $tcp2
+set sink2 [new Agent/TCPSink]
+$ns attach-agent $n8 $sink2
+$ns connect $tcp2 $sink2
+$tcp2 set class_ 2
+$tcp2 set packetSize_ 55
+set ftp2 [new Application/FTP]
+$ftp2 attach-agent $tcp2
+set tfile2 [open cwnd2.tr w]
+$tcp2 attach $tfile2
+$tcp2 trace cwnd_
+ 
+$ns at 0.5 "$ftp1 start"
+$ns at 1.0 "$ftp2 start"
+$ns at 5.0 "$ftp2 stop"
+$ns at 5.0 "$ftp1 stop"
+$ns at 5.5 "finish"
+$ns run
+ 
+BEGIN {
+}
+{
+if($6=="cwnd_") {
+printf("%f\t%f\n",$1,$7);
+}
+}
+END {
 }
 
-*********** leaky_bucket ***************
-
-import java.util.Scanner;
-
-public class leakyBucket {
-  public static void main(String args[]) throws InterruptedException {
-    int bs, incoming, outgoing, n, s = 0;
-    System.out.println("Enter the bucketsize, incoming_size, outgoing_rate, no_of_inputs:");
-    Scanner box = new Scanner(System.in);
-    bs = box.nextInt();
-    incoming = box.nextInt();
-    outgoing = box.nextInt();
-    n = box.nextInt();
-    while (n != 0) { // while loop until n is equal to zero
-      System.out.println("Incoming packet size = " + incoming);
-      if (incoming <= (bs - s)) { 
-        s += incoming;
-      } else {
-        System.out.println("Packet lost = " + (incoming - (bs - s)));
-        // packet lost = incoming - (bucketsize-currentsize);
-        s = bs;// s is updated to the full bucket size.
-        System.out.println("Bucket current size = " + s + " out of " + bs); 
-      }
-      s -= outgoing; // s is updated after outgoing. and then that is printed.
-      System.out.println("after outgoing of packet " + outgoing + " current bukcet size = " + s + " out of " + bs);
-      n--;
-      Thread.sleep(3000);
-    }
-  }
+-----------
+3.Implement simple ESS and with transmitting nodes in wire-less LAN by simulationand
+determine the performance with respect to transmission of packets.
+ 
+set ns [new Simulator]
+set tf [open prog4.tr w]
+$ns trace-all $tf
+set topo [new Topography]
+$topo load_flatgrid 1000 1000
+set nf [open prog4.nam w]
+$ns namtrace-all-wireless $nf 1000 1000
+set val(chan) Channel/WirelessChannel ;
+set val(prop) Propagation/TwoRayGround ;
+set val(netif) Phy/WirelessPhy ;
+set val(mac) Mac/802_11 ;
+set val(ifq) Queue/DropTail/PriQueue ;
+set val(ll) LL ;
+set val(ant) Antenna/OmniAntenna ;
+set val(ifqlen) 50 ;
+set val(nn) 2 ;
+set val(rp) AODV ;
+set val(x) 500 ;
+set val(y) 400 ;
+set val(stop) 10.0 ;
+$ns node-config -adhocRouting $val(rp) \
+-llType $val(ll) \
+-macType $val(mac) \
+-ifqType $val(ifq) \
+-ifqLen $val(ifqlen) \
+-antType $val(ant) \
+-propType $val(prop) \
+-phyType $val(netif) \
+-channelType $val(chan) \
+-topoInstance $topo \
+-agentTrace ON \
+-routerTrace ON \
+ -macTrace OFF \
+ -movementTrace ON
+create-god 3
+set n0 [$ns node]
+set n1 [$ns node]
+set n2 [$ns node]
+$n0 label "tcp0"
+$n1 label "sink1/tcp1"
+$n2 label "sink2"
+$n0 set X_ 50
+$n0 set Y_ 50
+$n0 set Z_ 0
+$n1 set X_ 100
+$n1 set Y_ 100
+$n1 set Z_ 0
+$n2 set X_ 600
+$n2 set Y_ 600
+$n2 set Z_ 0
+$ns at 0.1 "$n0 setdest 50 50 15"
+$ns at 0.1 "$n1 setdest 100 100 25"
+$ns at 0.1 "$n2 setdest 600 600 25"
+set tcp0 [new Agent/TCP]
+$ns attach
+-agent $n0 $tcp0
+set ftp0 [new Application/FTP]
+$ftp0 attach
+-agent $tcp0
+set sink1 [new Agent/TCPSink]
+$ns attach
+-agent $n1 $sink1
+$ns connect $tcp0 $sink1
+set tcp1 [new Agent/TCP]
+$ns attach
+-agent $n1 $tcp1
+set ftp1 [new Application/FTP]
+$ftp1 attach
+-agent $tcp1
+set sink2 [new Agent/TCPSink]
+$ns attach
+-agent $n2 $sink2
+$ns connect $tcp1 $sink2
+$ns at 5 "$ftp0 start"
+$ns at 5 "$ftp1 start"
+$ns at 100 "$n1 setdest 550 550 15"
+$ns at 190 "$n1 setdest 70 70 15"
+proc finish { } {
+global ns nf tf
+$ns flush-trace
+exec nam prog6.nam &
+close $tf
+exit 0
+}
+$ns at 250 "finish"
+$ns run
+ 
+ 
+BEGIN{
+count1=0
+count2=0
+pack1=0
+pack2=0
+time1=0
+time2=0
+}
+{ if($1=="r"&& $3=="_1_" && $4=="AGT")
+{ count1++
+pack1=pack1+$8
+time1=$2 }
+if($1=="r" && $3=="_2_" && $4=="AGT")
+{ count2++
+pack2=pack2+$8
+time2=$2 }
+}
+END{
+printf("The Throughput from n0 to n1: %f Mbps \n", ((count1*pack1*8)/(time1*1000000)));
+printf("The Throughput from n1 to n2: %f Mbps", ((count2*pack2*8)/(time2*1000000)));
 }
