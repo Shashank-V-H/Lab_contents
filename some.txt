@@ -1,310 +1,409 @@
----- Java ----
-package c_N;
 
-import java.io.*;
-import java.util.Scanner;
-
-class CRC {
-    public static void main(String a[]) throws IOException {
-
-        Scanner in = new Scanner(System.in);
-        int[] message;
-        int[] gen;
-        int[] app_message;
-        int[] rem;
-        int[] trans_message;
-        int message_bits, gen_bits, total_bits;
-
-        System.out.println("\n Enter number of bits in message : ");
-        message_bits = in.nextInt();
-        message = new int[message_bits];
-        System.out.println("\n Enter message bits : ");
-        for (int i = 0; i < message_bits; i++)
-            message[i] = in.nextInt();
-        System.out.println("\n Enter number of bits in gen : ");
-        gen_bits = in.nextInt();
-
-        gen = new int[gen_bits];
-        System.out.println("\n Enter gen bits : ");
-        for (int i = 0; i < gen_bits; i++) {
-            gen[i] = in.nextInt();
-        }
-        total_bits = message_bits + gen_bits - 1;
-
-        app_message = new int[total_bits];
-        rem = new int[total_bits];
-        trans_message = new int[total_bits];
-
-        for (int i = 0; i < message.length; i++) {
-            app_message[i] = message[i];
-        }
-
-        System.out.print("\n Message bits are : ");
-        for (int i = 0; i < message_bits; i++) {
-            System.out.print(message[i]);
-        }
-        System.out.print("\n Generators bits are : ");
-        for (int i = 0; i < gen_bits; i++) {
-            System.out.print(gen[i]);
-        }
-
-        System.out.print("\n Appended message is : ");
-        for (int i = 0; i < app_message.length; i++) {
-            System.out.print(app_message[i]);
-        }
-
-        for (int j = 0; j < app_message.length; j++) {
-            rem[j] = app_message[j];
-        }
-
-        rem = computeCRC(app_message, gen, rem);
-
-        for (int i = 0; i < app_message.length; i++) {
-            trans_message[i] = (app_message[i] ^ rem[i]);
-        }
-
-        System.out.println("\n Transmitted message from the transmitter is : ");
-        for (int i = 0; i < trans_message.length; i++) {
-            System.out.print(trans_message[i]);
-        }
-
-        System.out.println("\n Enter received message of " + total_bits + " bits at receiver end : ");
-        for (int i = 0; i < trans_message.length; i++) {
-            trans_message[i] = in.nextInt();
-            ;
-        }
-        System.out.println("\n Received message is :");
-        for (int i = 0; i < trans_message.length; i++) {
-            System.out.print(trans_message[i]);
-        }
-
-        for (int j = 0; j < trans_message.length; j++) {
-            rem[j] = trans_message[j];
-        }
-        rem = computeCRC(trans_message, gen, rem);
-        for (int i = 0; i < rem.length; i++) {
-            if (rem[i] != 0)
-
-            {
-                System.out.println("\n There is Error in the received me ");
-                break;
-            }
-            if (i == rem.length - 1)
-
-                System.out.println("\n There is No Error in the received m ");
-        }
-    }
-
-    static int[] computeCRC(int app_message[], int gen[], int rem[]) {
-        int current = 0;
-        while (true) {
-            for (int i = 0; i < gen.length; i++) {
-                rem[current + i] = (rem[current + i] ^ gen[i]);
-            }
-            while (rem[current] == 0 && current != rem.length - 1) {
-                current++;
-            }
-            if ((rem.length - current) < gen.length) {
-                break;
-            }
-        }
-        return rem;
-    }
-}
-
-------------
-1.Implement an Ethernet LAN using n nodes and set multiple traffic nodes and plotcongestion 
-window for different source / destination.
+4th program
  
-set ns [new Simulator]
-set nf [open prog3.nam w]
-$ns namtrace-all $nf
-set nd [open prog3.tr w]
-$ns trace-all $nd
-$ns color 1 Blue
-$ns color 2 Red
-proc finish { } {
-global ns nf nd
-$ns flush-trace
-close $nf
-close $nd
-exec nam prog3.nam &
-exit 0
-}
-set n0 [$ns node]
-set n1 [$ns node]
-set n2 [$ns node]
-set n3 [$ns node]
-set n4 [$ns node]
-set n5 [$ns node]
-set n6 [$ns node]
-set n7 [$ns node]
-set n8 [$ns node]
-$n7 shape box
-$n7 color Blue
-$n8 shape hexagon
-$n8 color Red
-$ns duplex-link $n1 $n0 2Mb 10ms DropTail
- 
-$ns duplex-link $n2 $n0 2Mb 10ms DropTail
-$ns duplex-link $n0 $n3 1Mb 20ms DropTail
-$ns make-lan "$n3 $n4 $n5 $n6 $n7 $n8" 512Kb 40ms LL Queue/DropTail Mac/802_3
-$ns duplex-link-op $n1 $n0 orient right-down
-$ns duplex-link-op $n2 $n0 orient right-up
-$ns duplex-link-op $n0 $n3 orient right
-$ns queue-limit $n0 $n3 20
-set tcp1 [new Agent/TCP/Vegas]
-$ns attach-agent $n1 $tcp1
-set sink1 [new Agent/TCPSink]
-$ns attach-agent $n7 $sink1
-$ns connect $tcp1 $sink1
-$tcp1 set class_ 1
-$tcp1 set packetsize_ 55
-set ftp1 [new Application/FTP]
-$ftp1 attach-agent $tcp1
-set tfile [open cwnd.tr w]
-$tcp1 attach $tfile
-$tcp1 trace cwnd_
-set tcp2 [new Agent/TCP/Reno]
-$ns attach-agent $n2 $tcp2
-set sink2 [new Agent/TCPSink]
-$ns attach-agent $n8 $sink2
-$ns connect $tcp2 $sink2
-$tcp2 set class_ 2
-$tcp2 set packetSize_ 55
-set ftp2 [new Application/FTP]
-$ftp2 attach-agent $tcp2
-set tfile2 [open cwnd2.tr w]
-$tcp2 attach $tfile2
-$tcp2 trace cwnd_
- 
-$ns at 0.5 "$ftp1 start"
-$ns at 1.0 "$ftp2 start"
-$ns at 5.0 "$ftp2 stop"
-$ns at 5.0 "$ftp1 stop"
-$ns at 5.5 "finish"
-$ns run
- 
-BEGIN {
-}
-{
-if($6=="cwnd_") {
-printf("%f\t%f\n",$1,$7);
-}
-}
-END {
-}
 
------------
-3.Implement simple ESS and with transmitting nodes in wire-less LAN by simulationand
-determine the performance with respect to transmission of packets.
+CREATE TABLE STUDENT(
+USN VARCHAR2(20) PRIMARY KEY,
+SNAME VARCHAR2(20),
+ADDRESS VARCHAR2(20),
+PHONE INTEGER(10),
+GENDER CHAR(1));
+
+
+CREATE TABLE SEMSEC(
+SSID VARCHAR2(20) PRIMARY KEY,
+SEM INTEGER(2),
+SEC CHAR(1));
+
+     CREATE TABLE CLASS(
+     USN VARCHAR2(20),
+     SSID VARCHAR2(20),
+     PRIMARY KEY(USN,SSID),
+     FOREIGN KEY(USN)REFERENCES STUDENT(USN),
+    FOREIGN KEY(SSID)REFERENCES SEMSEC(SSID));
+
+CREATE TABLE SUBJECT(
+SUBCODE VARCHAR2(20) PRIMARY KEY,
+TITLE VARCHAR2(20),
+SEM INTEGER(2),
+CREDITS INTEGER(2));
+
+
+CREATE TABLE IAMARKS(
+USN VARCHAR2(20),
+SUBCODE VARCHAR2(20),
+SSID VARCHAR2(20),
+TEST1 INTEGER(2),
+TEST2 INTEGER(2),
+TEST3 INTEGER(2),
+FINALIA INTEGER(2),
+FOREIGN KEY(USN)REFERENCES STUDENT(USN),
+FOREIGN KEY(SUBCODE)REFERENCES SUBJECT(SUBCODE),
+FOREIGN KEY(SSID)REFERENCES SEMSEC(SSID));
+
+
+INSERT INTO STUDENT VALUES('1RN13CS020','ARUN','BELGAVI',8475869584,'M');
+INSERT INTO STUDENT VALUES('1RN13CS010','MALA','MANGLORE',8748523161,'F');
+INSERT INTO STUDENT VALUES('1RN13CS091','TEESHA','BENGALURU',8741023698,'F');
+INSERT INTO STUDENT VALUES('1RN13CS027','SHWETHA','HUBLI',7412369985,'F');
+INSERT INTO STUDENT VALUES('1RN14CS005','ARJUN','BENGALURU',8546987452,'M');
+INSERT INTO STUDENT VALUES('1RN14CS075','JESSI','BENGALURU',7487454124,'F');
+INSERT INTO STUDENT VALUES('1RN14CS047','JASMINE','BENGALURU',9458745632,'F');
+INSERT INTO STUDENT VALUES('1RN15CS097','BHARATH','SHIMOGA',6363055444,'M');
+INSERT INTO STUDENT VALUES('1RN15CS147','MANDARA','MANGLORE',8745968212,'F');
+INSERT INTO STUDENT VALUES('1RN15CS085','BINDHU','KODAGU',7458963215,'F');
+INSERT INTO STUDENT VALUES('1RN15CS091','VISHWA','BELLARY',8458758452,'M');
+INSERT INTO STUDENT VALUES('1RN16CS049','SHARAN','KALBURGI',7898458475,'M');
+INSERT INTO STUDENT VALUES('1RN16CS125','SAMEERA','BIJAPUR',8231569585,'F');
+INSERT INTO STUDENT VALUES('1RN16CS108','SUMIT','CHITRADURGA',8904174745,'M');
+
+
+INSERT INTO SEMSEC VALUES('CSE8A',8,'A');
+INSERT INTO SEMSEC VALUES('CSE8B',8,'B');
+INSERT INTO SEMSEC VALUES('CSE8C',8,'C');
+INSERT INTO SEMSEC VALUES('CSE7A',7,'A');
+INSERT INTO SEMSEC VALUES('CSE7B',7,'B');
+INSERT INTO SEMSEC VALUES('CSE7C',7,'C');
+INSERT INTO SEMSEC VALUES('CSE6A',6,'A');
+INSERT INTO SEMSEC VALUES('CSE6B',6,'B');
+INSERT INTO SEMSEC VALUES('CSE6C',6,'C');
+INSERT INTO SEMSEC VALUES('CSE5A',5,'A');
+INSERT INTO SEMSEC VALUES('CSE5B',5,'B');
+INSERT INTO SEMSEC VALUES('CSE5C',5,'C');
+INSERT INTO SEMSEC VALUES('CSE4A',4,'A');
+INSERT INTO SEMSEC VALUES('CSE4B',4,'B');
+INSERT INTO SEMSEC VALUES('CSE4C',4,'C');
+INSERT INTO SEMSEC VALUES('CSE3A',3,'A');
+INSERT INTO SEMSEC VALUES('CSE3B',3,'B');
+INSERT INTO SEMSEC VALUES('CSE3C',3,'C');
+INSERT INTO SEMSEC VALUES('CSE2A',2,'A');
+INSERT INTO SEMSEC VALUES('CSE2B',2,'B');
+INSERT INTO SEMSEC VALUES('CSE2C',2,'C');
+INSERT INTO SEMSEC VALUES('CSE1A',1,'A');
+INSERT INTO SEMSEC VALUES('CSE1B',1,'B');
+INSERT INTO SEMSEC VALUES('CSE1C',1,'C');
+
+
+INSERT INTO CLASS VALUES('1RN13CS020','CSE8A');
+INSERT INTO CLASS VALUES('1RN13CS010','CSE8A');
+INSERT INTO CLASS VALUES('1RN13CS091','CSE8B');
+INSERT INTO CLASS VALUES('1RN13CS027','CSE8C');
+
+INSERT INTO CLASS VALUES('1RN14CS005','CSE7A');
+INSERT INTO CLASS VALUES('1RN14CS075','CSE7A');
+INSERT INTO CLASS VALUES('1RN14CS047','CSE7A');
+
+INSERT INTO CLASS VALUES('1RN15CS097','CSE4A');
+INSERT INTO CLASS VALUES('1RN15CS147','CSE4A');
+INSERT INTO CLASS VALUES('1RN15CS085','CSE4B');
+INSERT INTO CLASS VALUES('1RN15CS091','CSE4C');
+
+INSERT INTO CLASS VALUES('1RN16CS049','CSE3A');
+INSERT INTO CLASS VALUES('1RN16CS125','CSE3B');
+INSERT INTO CLASS VALUES('1RN16CS108','CSE3C');
+
+
+INSERT INTO SUBJECT VALUES('10CS81','NM',8,4);
+INSERT INTO SUBJECT VALUES('10CS82','MM',8,4);
+INSERT INTO SUBJECT VALUES('10CS83','NAM',8,4);
+INSERT INTO SUBJECT VALUES('10CS84','ATS',8,4);
+INSERT INTO SUBJECT VALUES('10CS85','AWS',8,4);
+INSERT INTO SUBJECT VALUES('10CS71','MTRS',7,4);
+INSERT INTO SUBJECT VALUES('10CS72','SS',7,4);
+INSERT INTO SUBJECT VALUES('10CS73','FSWD',7,4);
+INSERT INTO SUBJECT VALUES('10CS74','META',7,4);
+INSERT INTO SUBJECT VALUES('10CS75','RM',7,4);
+INSERT INTO SUBJECT VALUES('10CS76','SOF',7,4);
+INSERT INTO SUBJECT VALUES('15CS51','DBMS',5,3);
+INSERT INTO SUBJECT VALUES('15CS52','ATCS',5,3);
+INSERT INTO SUBJECT VALUES('15CS53','CN',5,3);
+INSERT INTO SUBJECT VALUES('15CS54','ANJS',5,3);
+INSERT INTO SUBJECT VALUES('15CS55','AIML',5,3);
+INSERT INTO SUBJECT VALUES('15CS56','EVS',5,3);
+INSERT INTO SUBJECT VALUES('15CS41','DAA',4,4);
+INSERT INTO SUBJECT VALUES('15CS42','MCES',4,4);
+INSERT INTO SUBJECT VALUES('15CS43','OS',4,4);
+INSERT INTO SUBJECT VALUES('15CS44','WEB',4,4);
+INSERT INTO SUBJECT VALUES('15CS45','BIOLOGY',4,4);
+INSERT INTO SUBJECT VALUES('15CS46','MATHS',4,4);
+INSERT INTO SUBJECT VALUES('15CS31','DSA',3,4);
+INSERT INTO SUBJECT VALUES('15CS32','ADE',3,4);
+INSERT INTO SUBJECT VALUES('15CS33','JAVA',3,4);
+INSERT INTO SUBJECT VALUES('15CS34','COA',3,4);
+INSERT INTO SUBJECT VALUES('15CS35','PYTHON',3,4);
+INSERT INTO SUBJECT VALUES('15CS36','SCR',3,4);
+
+
+
+
+INSERT INTO IAMARKS(USN,SUBCODE,SSID,TEST1,TEST2,TEST3)VALUES('1RN13CS091','10CS81','CSE8C',19,15,18);
+INSERT INTO IAMARKS(USN,SUBCODE,SSID,TEST1,TEST2,TEST3)VALUES('1RN13CS091','10CS82','CSE8C',20,15,17);
+INSERT INTO IAMARKS(USN,SUBCODE,SSID,TEST1,TEST2,TEST3)VALUES('1RN13CS091','10CS83','CSE8C',18,15,13);
+INSERT INTO IAMARKS(USN,SUBCODE,SSID,TEST1,TEST2,TEST3)VALUES('1RN13CS091','10CS84','CSE8C',19,16,17);
+INSERT INTO IAMARKS(USN,SUBCODE,SSID,TEST1,TEST2,TEST3)VALUES('1RN13CS091','10CS85','CSE8C',19,20,18);
+
+
+QUERIES
+1.LIST ALL STUDENTS  STUDYING IN 4TM SEM C SECTION:
+
+SELECT S.*,SS.SEM,SS.SEC
+FROM STUDENT S,SEMSEC SS,CLASS C
+WHERE S.USN=C.USN AND 
+SS.SSID=C.SSID AND
+SS.SEM=4 AND
+SS.SEC='C';
+
+2.. Compute the total number of male and female students in each semester and in each 
+section
+
+SELECT SS.SEM,SS.SEC,S.GENDER,COUNT(S.GENDER)AS COUNT
+FROM STUDENT S,SEMSEC SS,CLASS C
+WHERE S.USN=C.USN AND
+SS.SSID=C.SSID
+GROUP BY SS.SEM,SS.SEC,S.GENDER
+ORDER BY SEM;
+
+3.Create a view of Test1 marks of student USN ‘1BI15CS101’ in all subjects.
+  
+CREATE VIEW ST
+AS 
+SELECT TEST1,SUBCODE
+FROM IAMARKS
+WHERE USN='1RN13CS091';
+
+4.Calculate the FinalIA (average of best two test marks) and update the corresponding 
+table for all students
+
+UPDATE IAMARKS
+SET FINALIA=(CASE WHEN GREATEST(TEST1,TEST2)<>GREATEST(TEST1,TEST3)
+THEN  GREATEST(TEST1,TEST2)+GREATEST(TEST1,TEST3)
+ELSE GREATEST(TEST1,TEST2)+GREATEST(TEST2,TEST3)
+END)/2
+WHERE FINALIA IS NULL;
+
+5. Categorize students based on the following criterion:
+If FinalIA = 17 to 20 then CAT = ‘Outstanding’
+If FinalIA = 12 to 16 then CAT = ‘Average’
+If FinalIA< 12 then CAT = ‘Weak’
+Give these details only for 8th semester A, B, and C section students.
+
+SELECT S.USN,S.SNAME,S.ADDRESS,S.PHONE,S.GENDER,
+(CASE 
+WHEN IA.FINALIA BETWEEN 17 AND 20 THEN 'OUTSTANDING'
+WHEN IA.FINALIA BETWEEN 12 AND 16 THEN 'AVERAGE'
+ELSE 'WEAK'
+END) AS CAT
+FROM STUDENT S,SEMSEC SS,IAMARKS IA,SUBJECT SUB
+WHERE S.USN=IA.USN AND
+SUB.SUBCODE=IA.SUBCODE AND
+SS.SSID=IA.SSID AND
+SUB.SEM=8;
+
+
+5th PROGRAM COMPANY DATABASE
+
+
+CREATE TABLE DEPARTMENT(
+DNO VARCHAR2(20) PRIMARY KEY,
+DNAME VARCHAR2(20),
+MGR_STARTDATE DATE);
+
+CREATE TABLE EMPLOYEE(
+SSN VARCHAR2(20) PRIMARY KEY,
+FNAME VARCHAR2(20),
+LNAME VARCHAR2(20),
+ADDRESS VARCHAR2(20),
+SEX CHAR(1),
+SALARY INTEGER,
+SUPERSSN VARCHAR2(20),
+DNO VARCHAR2(20),
+FOREIGN KEY(SUPERSSN)REFERENCES EMPLOYEE(SSN),
+FOREIGN KEY(DNO)REFERENCES DEPARTMENT(DNO));
  
-set ns [new Simulator]
-set tf [open prog4.tr w]
-$ns trace-all $tf
-set topo [new Topography]
-$topo load_flatgrid 1000 1000
-set nf [open prog4.nam w]
-$ns namtrace-all-wireless $nf 1000 1000
-set val(chan) Channel/WirelessChannel ;
-set val(prop) Propagation/TwoRayGround ;
-set val(netif) Phy/WirelessPhy ;
-set val(mac) Mac/802_11 ;
-set val(ifq) Queue/DropTail/PriQueue ;
-set val(ll) LL ;
-set val(ant) Antenna/OmniAntenna ;
-set val(ifqlen) 50 ;
-set val(nn) 2 ;
-set val(rp) AODV ;
-set val(x) 500 ;
-set val(y) 400 ;
-set val(stop) 10.0 ;
-$ns node-config -adhocRouting $val(rp) \
--llType $val(ll) \
--macType $val(mac) \
--ifqType $val(ifq) \
--ifqLen $val(ifqlen) \
--antType $val(ant) \
--propType $val(prop) \
--phyType $val(netif) \
--channelType $val(chan) \
--topoInstance $topo \
--agentTrace ON \
--routerTrace ON \
- -macTrace OFF \
- -movementTrace ON
-create-god 3
-set n0 [$ns node]
-set n1 [$ns node]
-set n2 [$ns node]
-$n0 label "tcp0"
-$n1 label "sink1/tcp1"
-$n2 label "sink2"
-$n0 set X_ 50
-$n0 set Y_ 50
-$n0 set Z_ 0
-$n1 set X_ 100
-$n1 set Y_ 100
-$n1 set Z_ 0
-$n2 set X_ 600
-$n2 set Y_ 600
-$n2 set Z_ 0
-$ns at 0.1 "$n0 setdest 50 50 15"
-$ns at 0.1 "$n1 setdest 100 100 25"
-$ns at 0.1 "$n2 setdest 600 600 25"
-set tcp0 [new Agent/TCP]
-$ns attach
--agent $n0 $tcp0
-set ftp0 [new Application/FTP]
-$ftp0 attach
--agent $tcp0
-set sink1 [new Agent/TCPSink]
-$ns attach
--agent $n1 $sink1
-$ns connect $tcp0 $sink1
-set tcp1 [new Agent/TCP]
-$ns attach
--agent $n1 $tcp1
-set ftp1 [new Application/FTP]
-$ftp1 attach
--agent $tcp1
-set sink2 [new Agent/TCPSink]
-$ns attach
--agent $n2 $sink2
-$ns connect $tcp1 $sink2
-$ns at 5 "$ftp0 start"
-$ns at 5 "$ftp1 start"
-$ns at 100 "$n1 setdest 550 550 15"
-$ns at 190 "$n1 setdest 70 70 15"
-proc finish { } {
-global ns nf tf
-$ns flush-trace
-exec nam prog6.nam &
-close $tf
-exit 0
-}
-$ns at 250 "finish"
-$ns run
- 
- 
-BEGIN{
-count1=0
-count2=0
-pack1=0
-pack2=0
-time1=0
-time2=0
-}
-{ if($1=="r"&& $3=="_1_" && $4=="AGT")
-{ count1++
-pack1=pack1+$8
-time1=$2 }
-if($1=="r" && $3=="_2_" && $4=="AGT")
-{ count2++
-pack2=pack2+$8
-time2=$2 }
-}
-END{
-printf("The Throughput from n0 to n1: %f Mbps \n", ((count1*pack1*8)/(time1*1000000)));
-printf("The Throughput from n1 to n2: %f Mbps", ((count2*pack2*8)/(time2*1000000)));
-}
+ALTER TABLE DEPARTMENT
+ADD COLUMN MGRSSN VARCHAR2(20);
+
+ALTER TABLE DEPARTMENT 
+ADD CONSTRAINT FOREIGN KEY(MGRSSN) REFERENCES EMPLOYEE(SSN);
+
+CREATE TABLE DLOCATION(
+DNO VARCHAR2(20),
+DLOC VARCHAR2(20),
+PRIMARY KEY(DNO,DLOC),
+FOREIGN KEY(DNO)REFERENCES DEPARTMENT(DNO));
+
+
+CREATE TABLE PROJECT(
+PNO VARCHAR2(20) PRIMARY KEY,
+PNAME VARCHAR2(20),
+PLOCATION VARCHAR2(20),
+DNO VARCHAR2(20),
+FOREIGN KEY(DNO)REFERENCES DEPARTMENT(DNO));
+
+CREATE TABLE WORKSON(
+ESSN VARCHAR2(20),
+PNO VARCHAR2(20),
+HOURS INTEGER,
+PRIMARY KEY(ESSN,PNO),
+FOREIGN KEY(ESSN)REFERENCES EMPLOYEE(SSN),
+FOREIGN KEY(PNO)REFERENCES PROJECT(PNO));
+
+
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSECE01','JOHN','SCOTT','BANGLORE','M',200000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSCSE01','AKSHAY','KUMAR','BANGLORE','M',800000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSCSE02','EDWARD','SCOTT','BANGLORE','M',500000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSCSE03','ANJALI','MISHRA','MYSOOR','F',450000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSCSE04','ROHIT','SHARMA','BIDAR','M',650000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSCSE05','SURYA','YADAV','MANGLORE','M',350000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSCSE06','ARUN','RAJ','BANGLORE','M',900000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSACC01','ADITI','PANDEY','KOLAR','F',250000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSACC02','ANJUM','CHOPRA','VIJAYAPUR','F',740000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSISE01','VIRAT','KOHLI','BANGLORE','M',150000);
+INSERT INTO EMPLOYEE(SSN,FNAME,LNAME,ADDRESS,SEX,SALARY)VALUES('RNSIT01','MUKESH','ARYA','MANGLORE','M',480000);
+
+
+INSERT INTO DEPARTMENT VALUES('1','ACCOUNTS','2002-01-01','RNSECE01');
+INSERT INTO DEPARTMENT VALUES('2','IT','2012-06-04','RNSACC01');
+INSERT INTO DEPARTMENT VALUES('3','ECE','2006-11-08','RNSIT01');
+INSERT INTO DEPARTMENT VALUES('4','ISE','2008-01-21','RNSISE01');
+INSERT INTO DEPARTMENT VALUES('5','CSE','2012-03-07','RNSCSE05');
+
+
+UPDATE EMPLOYEE 
+SET SUPERSSN=NULL,DNO='3'
+WHERE SSN='RNSECE01';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN='RNSCSE02',DNO='5'
+WHERE SSN='RNSCSE01';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN='RNSCSE03',DNO='5'
+WHERE SSN='RNSCSE02';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN='RNSCSE04',DNO='5'
+WHERE SSN='RNSCSE03';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN='RNSCSE05',DNO='5'
+WHERE SSN='RNSCSE04';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN='RNSCSE06',DNO='5'
+WHERE SSN='RNSCSE05';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN=NULL,DNO='5'
+WHERE SSN='RNSCSE06';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN='RNSACC02',DNO='1'
+WHERE SSN='RNSACC01';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN=NULL,DNO='1'
+WHERE SSN='RNSACC02';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN=NULL,DNO='2'
+WHERE SSN='RNSISE01';
+
+UPDATE EMPLOYEE 
+SET SUPERSSN=NULL,DNO='4'
+WHERE SSN='RNSIT01';
+
+
+INSERT INTO DLOCATION VALUES('1','BANGLORE');
+INSERT INTO DLOCATION VALUES('2','BANGLORE');
+INSERT INTO DLOCATION VALUES('3','BANGLORE');
+INSERT INTO DLOCATION VALUES('4','MANGLORE');
+INSERT INTO DLOCATION VALUES('5','MANGLORE');
+
+INSERT INTO PROJECT VALUES(100,'IOT','BANGLORE','5');
+INSERT INTO PROJECT VALUES(101,'META','BANGLORE','5');
+INSERT INTO PROJECT VALUES(102,'FULLSTACK','BANGLORE','5');
+INSERT INTO PROJECT VALUES(103,'ECOMMERCE','BANGLORE','4');
+INSERT INTO PROJECT VALUES(104,'SALES MANAGEMENT','BANGLORE','1');
+INSERT INTO PROJECT VALUES(105,'DIGITAL MARKETING','BANGLORE','1');
+INSERT INTO PROJECT VALUES(106,'SENSOR','BANGLORE','3');
+INSERT INTO PROJECT VALUES(108,'BIGDATA','BANGLORE','2');
+
+INSERT INTO WORKSON VALUES('RNSCSE01',100,5);
+INSERT INTO WORKSON VALUES('RNSCSE01',101,5);
+INSERT INTO WORKSON VALUES('RNSCSE01',102,5);
+INSERT INTO WORKSON VALUES('RNSCSE02',100,8);
+INSERT INTO WORKSON VALUES('RNSCSE03',102,8);
+INSERT INTO WORKSON VALUES('RNSCSE04',100,7);
+INSERT INTO WORKSON VALUES('RNSCSE05',101,4);
+INSERT INTO WORKSON VALUES('RNSCSE06',102,4);
+INSERT INTO WORKSON VALUES('RNSACC01',104,6);
+INSERT INTO WORKSON VALUES('RNSACC02',105,9);
+INSERT INTO WORKSON VALUES('RNSISE01',106,10);
+INSERT INTO WORKSON VALUES('RNSIT01',107,5);
+INSERT INTO WORKSON VALUES('RNSECE01',103,5);
+
+
+QUERRIES;
+
+1.Make a list of all project numbers for projects that involve an employee whose last 
+name is ‘Scott’, either as a worker or as a manager of the department that controls the 
+projecT
+
+
+(SELECT DISTINCT P.PNO
+FROM EMPLOYEE E ,PROJECT P,DEPARTMENT D
+WHERE E.DNO=D.DNO AND 
+D.MGRSSN=E.SSN AND
+E.LNAME='SCOTT')
+UNION
+(SELECT DISTINCT P1.PNO
+FROM EMPLOYEE E1,WORKSON W,PROJECT P1
+WHERE E1.SSN=W.ESSN AND
+P1.PNO=W.PNO AND
+E1.LNAME='SCOTT');
+
+2.Show the resulting salaries if every employee working on the ‘IoT’ project is given a 10 
+percent raise
+
+SELECT E.FNAME,E.LNAME ,1.1*E.SALARY AS INCRSALARY
+FROM EMPLOYEE E,WORKSON W,PROJECT P
+WHERE E.SSN=W.ESSN AND
+P.PNO=W.PNO AND
+P.PNAME='IOT';
+
+3.Find the sum of the salaries of all employees of the ‘Accounts’ department, as well as 
+the maximum salary, the minimum salary, and the average salary in this department
+
+
+SELECT SUM(E.SALARY),MAX(E.SALARY),MIN(E.SALARY),AVG(E.SALARY)
+FROM EMPLOYEE E, DEPARTMENT D
+WHERE E.DNO=D.DNO AND
+D.DNAME='ACCOUNTS';
+
+4. Retrieve the name of each employee who works on all the projects Controlled by 
+department number 5 (use NOT EXISTS operator)
+
+SELECT E.FNAME,E.LNAME 
+FROM EMPLOYEE E
+WHERE NOT EXISTS((SELECT PNO 
+FROM PROJECT 
+WHERE DNO='5')
+EXCEPT(SELECT PNO
+FROM WORKSON W
+WHERE E.SSN=W.ESSN));
+
+
+5.5. For each department that has more than five employees, retrieve the department 
+number and the number of its employees who are making more than Rs. 6, 00,000.
+
+SELECT D.DNO ,COUNT(*)
+FROM EMPLOYEE E,DEPARTMENT D
+WHERE E.DNO=D.DNO AND
+E.SALARY>600000 AND
+D.DNO IN(SELECT E1.DNO 
+FROM EMPLOYEE E1
+GROUP BY E1.DNO
+HAVING COUNT(*)>5)
+GROUP BY D.DNO;
+
