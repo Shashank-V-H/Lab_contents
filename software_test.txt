@@ -1,0 +1,183 @@
+# Next date 
+
+#include <stdio.h>
+
+int check(int day, int month) {
+  return ((month == 4 || month == 6 || month == 9 || month == 11) && day == 31);
+}
+
+int isleap(int year) {
+  return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
+}
+
+int main() {
+  int day, month, year, tomm_day, tomm_month, tomm_year;
+  char flag;
+  do {
+    flag = 'y';
+    printf("\nEnter today's date in the form of dd mm yyyy: ");
+    scanf("%d%d%d", &day, &month, &year);
+    tomm_month = month;
+    tomm_year = year;
+
+    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1812 ||
+        year > 2019 || check(day, month) ||
+        (month == 2 &&
+         ((isleap(year) && day > 29) || (!isleap(year) && day > 28)))) {
+      flag = 'n';
+      printf("Invalid date input\n");
+    }
+  } while (flag == 'n');
+
+  switch (month) {
+  case 1:
+  case 3:
+  case 5:
+  case 7:
+  case 8:
+  case 10:
+    tomm_day = (day < 31) ? day + 1 : 1;
+    tomm_month = (day < 31) ? month : month + 1;
+    break;
+  case 4:
+  case 6:
+  case 9:
+  case 11:
+    tomm_day = (day < 30) ? day + 1 : 1;
+    tomm_month = (day < 30) ? month : month + 1;
+    break;
+  case 12:
+    tomm_day = (day < 31) ? day + 1 : 1;
+    tomm_month = (day < 31) ? month : 1;
+    tomm_year = (day < 31) ? year : year + 1;
+    if (tomm_year > 2019)
+      printf("The next day is out of the boundary value of year\n");
+    break;
+  case 2:
+    if (day < 28 || (isleap(year) && day == 28))
+      tomm_day = day + 1;
+    else
+      tomm_day = 1, tomm_month = 3;
+    break;
+  }
+  printf("Next day is: %d %d %d\n", tomm_day, tomm_month, tomm_year);
+  return 0;
+}
+
+
+---------
+
+# triangle problem
+
+
+#include <stdio.h>
+int main() {
+  // for (int i = 0; i < 25; i++) {
+  int a, b, c, c1, c2, c3;
+  char istriangle;
+  do {
+    printf("\n enter 3 integers which are sides of triangle\n");
+    scanf("%d%d%d", &a, &b, &c);
+    printf("\n a=%d\t b=%d\t c=%d", a, b, c);
+    c1 = a >= 1 && a <= 10;
+    c2 = b >= 1 && b <= 10;
+    c3 = c >= 1 && c <= 10;
+    if (!c1)
+      printf("\n the value of a=%d is not the range of permitted value", a);
+    if (!c2)
+      printf("\n the value of b=%d is not the range of permitted value", b);
+    if (!c3)
+      printf("\n the value of c=%d is not the range of permitted value", c);
+  } while (!(c1 && c2 && c3));
+  // to check is it a triangle or not
+  if (a < b + c && b < a + c && c < a + b)
+    istriangle = 'y';
+  else
+    istriangle = 'n';
+  if (istriangle == 'y')
+    if ((a == b) && (b == c))
+      printf("equilateral triangle\n");
+    else if ((a != b) && (a != c) && (b != c))
+      printf("scalene triangle\n");
+    else
+      printf("isosceles triangle\n");
+  else
+    printf("Not a triangle\n");
+  // }
+  return 0;
+}
+
+
+------
+
+# Commission
+
+#include <stdio.h>
+
+int main() {
+  int locks, stocks, barrels, tlocks, tstocks, tbarrels;
+  float lprice, sprice, bprice, sales, comm;
+
+  lprice = 45.0;
+  sprice = 30.0;
+  bprice = 25.0;
+  tlocks = 0;
+  tstocks = 0;
+  tbarrels = 0;
+
+  printf("\nEnter the number of locks and to exit the loop enter -1 for locks\n");
+  scanf("%d", &locks);
+  while (locks != -1) {
+    int c1 = (locks < 0 || locks > 70);
+    if (c1) {
+      printf("Value of locks not in the range 0..70\n");
+      printf("\nEnter the number of locks and to exit the loop enter -1 for locks\n");
+      scanf("%d", &locks);
+      continue;
+    }
+
+    printf("Enter the number of stocks and barrels\n");
+    scanf("%d%d", &stocks, &barrels);
+    int c2 = (stocks < 0 || stocks > 80);
+    int c3 = (barrels < 0 || barrels > 90);
+
+    if (c2) {
+      printf("Value of stocks not in the range 0..80\n");
+    }
+    if (c3) {
+      printf("Value of barrels not in the range 0..90\n");
+    }
+
+    if (!c1 && !c2 && !c3) {
+      tlocks += locks;
+      tstocks += stocks;
+      tbarrels += barrels;
+    }
+
+    printf("Total locks = %d\n", tlocks);
+    printf("Total stocks = %d\n", tstocks);
+    printf("Total barrels = %d\n", tbarrels);
+
+    printf("\nEnter the number of locks and to exit the loop enter -1 for locks\n");
+    scanf("%d", &locks);
+  }
+
+  printf("\nTotal locks = %d\nTotal stocks = %d\nTotal barrels = %d\n", tlocks, tstocks, tbarrels);
+  sales = lprice * tlocks + sprice * tstocks + bprice * tbarrels;
+
+  if (sales > 1800.0) {
+    comm = 0.10 * 1000.0;
+    comm += 0.15 * 800.0;
+    comm += 0.20 * (sales - 1800.0);
+  } else if (sales > 1000.0) {
+    comm = 0.10 * 1000.0;
+    comm += 0.15 * (sales - 1000.0);
+  } else {
+    comm = 0.10 * sales;
+  }
+
+  printf("Total sales = %.2f\n", sales);
+  printf("Total commission = %.2f\n", comm);
+
+  return 0;
+}
