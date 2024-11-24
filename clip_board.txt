@@ -1,0 +1,17 @@
+
+# Git status in Bash prompt with icons
+parse_git_branch() {
+  # Check for unstaged changes
+  git diff --quiet || echo " *"
+
+  # Check for staged changes
+  git diff --cached --quiet || echo " +"
+
+  # Check for untracked files
+  git ls-files --other --exclude-standard --directory | grep -q . && echo " ?"
+
+  # Show the branch name
+  git branch 2>/dev/null | grep '*' | sed 's/* //'
+}
+
+export PS1='[\u@\h \W$(parse_git_branch)]\$ '
