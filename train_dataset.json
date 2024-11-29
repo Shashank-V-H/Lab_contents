@@ -1,0 +1,42 @@
+[
+  {
+    "input": "Create a webpage with a header, a navigation bar, and a footer",
+    "output": "<html>\n<head>\n  <title>Webpage with Navigation</title>\n</head>\n<body>\n  <header>\n    <h1>Welcome to My Webpage</h1>\n  </header>\n  <nav>\n    <ul>\n      <li><a href=\"#\">Home</a></li>\n      <li><a href=\"#\">About</a></li>\n      <li><a href=\"#\">Contact</a></li>\n    </ul>\n  </nav>\n  <footer>\n    <p>Footer content here</p>\n  </footer>\n</body>\n</html>"
+  },
+  {
+    "input": "Generate a webpage with a form to collect name, email, and a message from the user",
+    "output": "<html>\n<head>\n  <title>Contact Form</title>\n</head>\n<body>\n  <h1>Contact Us</h1>\n  <form action=\"#\" method=\"POST\">\n    <label for=\"name\">Name:</label>\n    <input type=\"text\" id=\"name\" name=\"name\"><br><br>\n    <label for=\"email\">Email:</label>\n    <input type=\"email\" id=\"email\" name=\"email\"><br><br>\n    <label for=\"message\">Message:</label>\n    <textarea id=\"message\" name=\"message\"></textarea><br><br>\n    <input type=\"submit\" value=\"Submit\">\n  </form>\n</body>\n</html>"
+  },
+  {
+    "input": "Create a webpage with a simple calculator for adding two numbers",
+    "output": "<html>\n<head>\n  <title>Simple Calculator</title>\n  <script>\n    function addNumbers() {\n      var num1 = parseFloat(document.getElementById('num1').value);\n      var num2 = parseFloat(document.getElementById('num2').value);\n      var result = num1 + num2;\n      document.getElementById('result').innerHTML = 'Result: ' + result;\n    }\n  </script>\n</head>\n<body>\n  <h1>Simple Calculator</h1>\n  <label for=\"num1\">Number 1:</label>\n  <input type=\"number\" id=\"num1\"><br><br>\n  <label for=\"num2\">Number 2:</label>\n  <input type=\"number\" id=\"num2\"><br><br>\n  <button onclick=\"addNumbers()\">Add</button>\n  <p id=\"result\"></p>\n</body>\n</html>"
+  },
+  {
+    "input": "Create a webpage with a grid layout displaying three images side by side",
+    "output": "<html>\n<head>\n  <title>Image Grid</title>\n  <style>\n    .grid-container {\n      display: grid;\n      grid-template-columns: auto auto auto;\n      gap: 10px;\n    }\n    .grid-item {\n      width: 100%;\n      height: auto;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"grid-container\">\n    <div class=\"grid-item\"><img src=\"image1.jpg\" alt=\"Image 1\"></div>\n    <div class=\"grid-item\"><img src=\"image2.jpg\" alt=\"Image 2\"></div>\n    <div class=\"grid-item\"><img src=\"image3.jpg\" alt=\"Image 3\"></div>\n  </div>\n</body>\n</html>"
+  },
+  {
+    "input": "Create a webpage with a button that shows an alert when clicked",
+    "output": "<html>\n<head>\n  <title>Button Alert</title>\n  <script>\n    function showAlert() {\n      alert('Button clicked!');\n    }\n  </script>\n</head>\n<body>\n  <button onclick=\"showAlert()\">Click Me</button>\n</body>\n</html>"
+  },
+  {
+    "input": "Generate a webpage with a horizontal navigation menu with links to Home, About, and Services",
+    "output": "<html>\n<head>\n  <title>Navigation Menu</title>\n  <style>\n    ul {\n      list-style-type: none;\n      padding: 0;\n    }\n    li {\n      display: inline;\n      margin-right: 10px;\n    }\n  </style>\n</head>\n<body>\n  <ul>\n    <li><a href=\"#\">Home</a></li>\n    <li><a href=\"#\">About</a></li>\n    <li><a href=\"#\">Services</a></li>\n  </ul>\n</body>\n</html>"
+  },
+  {
+    "input": "Generate a table with three columns for name, age, and city",
+    "output": "<html>\n<head>\n  <title>Simple Table</title>\n</head>\n<body>\n  <table border=\"1\">\n    <tr>\n      <th>Name</th>\n      <th>Age</th>\n      <th>City</th>\n    </tr>\n    <tr>\n      <td>John Doe</td>\n      <td>25</td>\n      <td>New York</td>\n    </tr>\n    <tr>\n      <td>Jane Smith</td>\n      <td>30</td>\n      <td>Los Angeles</td>\n    </tr>\n  </table>\n</body>\n</html>"
+  },
+  {
+    "input": "Create a contact form with fields for name, email, message and validate email input",
+    "output": "<html>\n<head>\n  <title>Contact Form</title>\n  <script>\n    function validateForm() {\n      var email = document.getElementById('email').value;\n      var regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$/;\n      if (!regex.test(email)) {\n        alert('Please enter a valid email address');\n        return false;\n      }\n      return true;\n    }\n  </script>\n</head>\n<body>\n  <form onsubmit=\"return validateForm()\">\n    <label for=\"name\">Name:</label>\n    <input type=\"text\" id=\"name\" name=\"name\"><br><br>\n    <label for=\"email\">Email:</label>\n    <input type=\"email\" id=\"email\" name=\"email\"><br><br>\n    <label for=\"message\">Message:</label>\n    <textarea id=\"message\" name=\"message\"></textarea><br><br>\n    <input type=\"submit\" value=\"Submit\">\n  </form>\n</body>\n</html>"
+  },
+  {
+    "input": "Create a webpage with a dark theme using CSS",
+    "output": "<html>\n<head>\n  <title>Dark Theme Webpage</title>\n  <style>\n    body {\n      background-color: #333;\n      color: white;\n    }\n    h1, h2 {\n      color: lightgray;\n    }\n  </style>\n</head>\n<body>\n  <h1>Welcome to the Dark Webpage</h1>\n  <h2>This is a subheading</h2>\n  <p>This is some content on the dark-themed webpage.</p>\n</body>\n</html>"
+  },
+  {
+    "input": "Create a webpage with a slideshow of images",
+    "output": "<html>\n<head>\n  <title>Image Slideshow</title>\n  <style>\n    .slideshow-container {\n      max-width: 100%;\n      position: relative;\n      margin: auto;\n    }\n    .slide {\n      display: none;\n    }\n    .active {\n      display: block;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"slideshow-container\">\n    <div class=\"slide active\"><img src=\"image1.jpg\" alt=\"Slide 1\"></div>\n    <div class=\"slide\"><img src=\"image2.jpg\" alt=\"Slide 2\"></div>\n    <div class=\"slide\"><img src=\"image3.jpg\" alt=\"Slide 3\"></div>\n  </div>\n  <script>\n    var slides = document.querySelectorAll('.slide');\n    var currentIndex = 0;\n    setInterval(function() {\n      slides[currentIndex].classList.remove('active');\n      currentIndex = (currentIndex + 1) % slides.length;\n      slides[currentIndex].classList.add('active');\n    }, 3000);\n  </script>\n</body>\n</html>"
+  }
+]
