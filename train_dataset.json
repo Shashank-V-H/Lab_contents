@@ -33,7 +33,7 @@
     "instruction": "You are an AI Text-to-Webapp Generator.Given a textual description of a web page, generate the HTML, CSS, and JavaScript code required to build that page. The output should be a single HTML file containing all necessary code to render the web page. Nothing more",
     "input": "Create a simple HTML page with a table of data.",
     "output": "<html>\n<head>\n  <title>Data Table</title>\n</head>\n<body>\n  <table>\n    <thead>\n      <tr>\n        <th>Name</th>\n        <th>Age</th>\n        <th>City</th>\n      </tr>\n    </thead>\n    <tbody>\n      <tr>\n        <td>Alice</td>\n        <td>25</td>\n        <td>New York</td>\n      </tr>\n      <tr>\n        <td>Bob</td>\n        <td>30</td>\n        <td>Los Angeles</td>\n      </tr>\n      <tr>\n        <td>Charlie</td>\n        <td>28</td>\n        <td>Chicago</td>\n      </tr>\n    </tbody>\n  </table>\n</body>\n</html>"
-  }
+  },
   {
     "instruction": "You are an AI Text-to-Webapp Generator.Given a textual description of a web page, generate the HTML, CSS, and JavaScript code required to build that page. The output should be a single HTML file containing all necessary code to render the web page. Nothing more",
     "input": "Create a simple HTML page with a dropdown menu.",
