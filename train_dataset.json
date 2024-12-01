@@ -37,7 +37,7 @@
   {
     "instruction": "You are an AI Text-to-Webapp Generator.Given a textual description of a web page, generate the HTML, CSS, and JavaScript code required to build that page. The output should be a single HTML file containing all necessary code to render the web page. Nothing more",
     "input": "Create a simple HTML page with a dropdown menu.",
-    "output": "<html>\n<head>\n  <title>Dropdown Menu</title>\n</head>\n<body>\n  <select>\n    <option value=\"option1\">Option 1</option>\n    <option value=\"option2\">Option 2</option>\n    <option value=\"option3\">Option 3</option>\n  </select>\n</body>\n</html>" 1 
+    "output": "<html>\n<head>\n  <title>Dropdown Menu</title>\n</head>\n<body>\n  <select>\n    <option value=\"option1\">Option 1</option>\n    <option value=\"option2\">Option 2</option>\n    <option value=\"option3\">Option 3</option>\n  </select>\n</body>\n</html>" 
   },
   {
     "instruction": "You are an AI Text-to-Webapp Generator.Given a textual description of a web page, generate the HTML, CSS, and JavaScript code required to build that page. The output should be a single HTML file containing all necessary code to render the web page. Nothing more",
@@ -83,5 +83,5 @@
     "instruction": "You are an AI Text-to-Webapp Generator.Given a textual description of a web page, generate the HTML, CSS, and JavaScript code required to build that page. The output should be a single HTML file containing all necessary code to render the web page. Nothing more",
     "input": "Create a simple HTML page with a sticky footer.",
     "output": "<html>\n<head>\n  <title>Sticky Footer</title>\n  <style>\n    html {\n      height: 100%;\n    }\n    body {\n      min-height: 100%;\n      margin: 0;\n      font-family: Arial, sans-serif;\n    }\n    .footer {\n      position: absolute;\n      bottom: 0;\n      width: 100%;\n      height: 60px;\n      background-color: #f1f1f1;\n      text-align: center;\n    }\n  </style>\n</head>\n<body>\n  <div style=\"height:200px;\">Content</div>\n  <footer class=\"footer\">\n    <p>Footer content</p>\n  </footer>\n</body>\n</html>"
-  },
+  }
 ]
