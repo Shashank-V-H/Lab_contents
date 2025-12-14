@@ -263,25 +263,23 @@ vim.api.nvim_set_keymap("n", "<leader>it", ":lua insert_template()<CR>", { norem
 --
 --
 --////////// To only supress the auto suggestions /////////////
-
 -- NOTE: Use <leader> tc to toggle for suggestions.
--- all are in their default action, can be supressid with below keybindings.
 -- local cmp = require("cmp")
 --
 -- cmp.setup({
---   enabled = true, -- Enable completion globally
+--   enabled = false, -- Disable completion globally
 -- })
-
-vim.api.nvim_set_keymap(
-  "n",
-  "<leader>tc",
-  ":lua require('cmp').setup({enabled = not require('cmp').get_config().enabled})<CR>",
-  { noremap = true, silent = true }
-)
-
--- Keymap for stopping LSP
-vim.api.nvim_set_keymap("n", "<leader>ts", ":LspStop<CR>", { noremap = true, silent = true })
-
+--
+-- vim.api.nvim_set_keymap(
+--   "n",
+--   "<leader>tc",
+--   ":lua require('cmp').setup({enabled = not require('cmp').get_config().enabled})<CR>",
+--   { noremap = true, silent = true }
+-- )
+-- Map <Leader>tc to the LspStop command
+local keymap = vim.api.nvim_set_keymap
+keymap("n", "<Leader>tc", ":LspStop<CR>", { noremap = true, silent = true })
+-- keymap("n", "<Leader>ts", "<C-Space>", { noremap = true, silent = true })
 --
 --
 -- =========================================================================================================

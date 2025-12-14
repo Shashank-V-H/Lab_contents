@@ -1,0 +1,141 @@
+-- return {
+--   "neovim/nvim-lspconfig",
+--   opts = {
+--     servers = {
+--       clangd = {
+--         cmd = { "clangd" },
+--         filetypes = { "c", "cpp", "objc", "objcpp" },
+--         root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
+--         single_file_support = true,
+--         settings = {
+--           clangd = {
+--             fallbackFlags = {
+--               "-std=c++20", -- Use C++20 standard
+--               "-stdlib=libstdc++", -- Use GNU standard library (optional for g++)
+--               "-I/opt/local/include", -- Include custom GCC headers
+--               "-L/opt/local/lib", -- Link against custom GCC libraries
+--             },
+--           },
+--         },
+--       },
+--     },
+--   },
+-- }
+
+-- second version for bits/stdc++ libraries
+-- return {
+--   "neovim/nvim-lspconfig",
+--   opts = {
+--     servers = {
+--       clangd = {
+--         cmd = { "clangd" },
+--         filetypes = { "c", "cpp", "objc", "objcpp" },
+--         root_dir = require("lspconfig.util").root_pattern("compile_commands.json", ".git"),
+--         single_file_support = true,
+--         settings = {
+--           clangd = {
+--             fallbackFlags = {
+--               "-std=c++20", -- Use C++20 standard
+--               "-stdlib=libstdc++", -- Use GNU standard library
+--               "-I/opt/local/include", -- Custom include path
+--               "-L/opt/local/lib", -- Custom library path
+--               "-I/opt/local/lib/gcc13/gcc/x86_64-apple-darwin23/13.3.0/include", -- Add this!
+--             },
+--           },
+--         },
+--       },
+--     },
+--   },
+-- }
+
+-- final version for bits/stdc++ libraries
+-- return {
+--   "neovim/nvim-lspconfig",
+--   opts = {
+--     servers = {
+--       clangd = {
+--         cmd = { "clangd" },
+--         filetypes = { "c", "cpp", "objc", "objcpp" },
+--         root_dir = require("lspconfig.util").root_pattern(
+--           ".git",
+--           "compile_commands.json",
+--           "compile_flags.txt",
+--           ".clangd"
+--         ),
+--         single_file_support = true,
+--         settings = {
+--           clangd = {
+--             fallbackFlags = {
+--               "-std=c++20", -- Use C++20 standard
+--               "-I/opt/local/include/gcc13/c++", -- Include path for GCC 13
+--               "-I/opt/local/include/gcc13/c++/x86_64-apple-darwin19", -- More include paths
+--               "-I/opt/local/lib/gcc13/gcc/x86_64-apple-darwin19/13.3.0/include", -- Include path for Clang
+--               "-I/opt/local/lib/gcc13/gcc/x86_64-apple-darwin19/13.3.0/include-fixed", -- Include additional paths
+--             },
+--           },
+--         },
+--       },
+--     },
+--   },
+-- }
+--
+
+-- return {
+--   "neovim/nvim-lspconfig",
+--   opts = {
+--     servers = {
+--       clangd = {
+--         keys = {
+--           { "<leader>ch", "<cmd>ClangdSwitchSourceHeader<cr>", desc = "Switch Source/Header (C/C++)" },
+--         },
+--         root_dir = function(fname)
+--           return require("lspconfig.util").root_pattern(
+--             "Makefile",
+--             "configure.ac",
+--             "configure.in",
+--             "config.h.in",
+--             "meson.build",
+--             "meson_options.txt",
+--             "build.ninja"
+--           )(fname) or require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt")(
+--             fname
+--           ) or require("lspconfig.util").find_git_ancestor(fname)
+--         end,
+--         capabilities = {
+--           offsetEncoding = { "utf-16" },
+--         },
+--         cmd = {
+--           "clangd",
+--           "--background-index",
+--           "--clang-tidy",
+--           "--header-insertion=iwyu",
+--           "--completion-style=detailed",
+--           "--function-arg-placeholders",
+--           "--fallback-style=llvm",
+--         },
+--         init_options = {
+--           usePlaceholders = true,
+--           completeUnimported = true,
+--           clangdFileStatus = true,
+--         },
+--       },
+--     },
+--     setup = {
+--       clangd = function(_, opts)
+--         local clangd_ext_opts = LazyVim.opts("clangd_extensions.nvim")
+--         require("clangd_extensions").setup(vim.tbl_deep_extend("force", clangd_ext_opts or {}, { server = opts }))
+--         return false
+--       end,
+--     },
+--   },
+-- }
+return {
+  "neovim/nvim-lspconfig",
+  opts = {
+    setup = {
+      clangd = function(_, opts)
+        opts.capabilities.offsetEncoding = { "utf-16" }
+      end,
+    },
+  },
+}

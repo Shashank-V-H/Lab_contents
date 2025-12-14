@@ -5,14 +5,35 @@ return {
   --add Abstract-CS colorscheme
   { "Abstract-IDE/Abstract-cs" },
 
-  -- Configure LazyVim to load gruvbox
+  { "arcticicestudio/nord-vim" },
+
+  { "marko-cerovac/material.nvim" },
+
+  { "ishan9299/nvim-solarized-lua" },
+
+  { "Yazeed1s/minimal.nvim" },
+
+  { "olivercederborg/poimandres.nvim" },
+
+  { "zootedb0t/citruszest.nvim" },
+
+  { "EdenEast/nightfox.nvim" },
+
+  -- { "ThemerCorp/themer.lua" },
+
+  -- Configure LazyVim to load desired colorscheme
   {
     "LazyVim/LazyVim",
     opts = {
       -- colorscheme = "tokyonight",
       -- colorscheme = "industry",
       -- colorscheme = "elflord",
-      colorscheme = "abscs",
+      -- colorscheme = "abscs",
+      -- colorscheme = "material-deep-ocean",
+      colorscheme = "lunaperche",
+      -- colorscheme = "elflord",
+      -- colorscheme = "nord",
+      -- colorscheme = "material",
     },
   },
 

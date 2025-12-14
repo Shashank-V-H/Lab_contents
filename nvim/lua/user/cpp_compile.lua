@@ -7,7 +7,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.api.nvim_buf_set_keymap(
       0,
       "n",
-      "<F5>",
+      "<c-u>",
       ":w<CR>:terminal g++ -std=c++17 % -o a.out && ./a.out<CR>",
       { noremap = true, silent = true }
     )
@@ -16,7 +16,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.api.nvim_buf_set_keymap(
       0,
       "n",
-      "<F9>",
+      "<c-i>",
       ":w<CR>:terminal g++ -std=c++17 % -o a.out && ./a.out < input.txt > output.txt<CR>",
       { noremap = true, silent = true }
     )
